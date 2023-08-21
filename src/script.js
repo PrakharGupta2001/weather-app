@@ -17,23 +17,35 @@ let weather = {
       })
       .then((data) => this.displayWeather(data));
   },
-  displayWeather: function (data) {
+  displayWeather: function (data, isCelsius) {
     const { name } = data;
     const { icon, description } = data.weather[0];
     const { temp, humidity } = data.main;
     const { speed } = data.wind;
+
+    const tempElement = document.querySelector(".temp");
+    const tempUnit = isCelsius ? "°C" : "°F";
+    const temperature = isCelsius ? temp : (temp * 9/5) + 32;
+
     document.querySelector(".city").innerText = "Weather in " + name;
     document.querySelector(".icon").src =
        "https://openweathermap.org/img/wn/" + icon + ".png";
     document.querySelector(".description").innerText = description;
-    document.querySelector(".temp").innerText = temp + "°C";
+    tempElement.innerText = temperature + tempUnit;
     document.querySelector(".humidity").innerText =
       "Humidity: " + humidity + "%";
     document.querySelector(".wind").innerText =
       "Wind speed: " + speed + " km/h";
     document.querySelector(".weather").classList.remove("loading");
-    
-  },
+
+    // Add event listener to the temperature button
+    const tempButton = document.querySelector(".temp-button");
+    tempButton.addEventListener("click", () => {
+        isCelsius = !isCelsius;
+        this.displayWeather(data, isCelsius);
+    });
+}
+,
   search: function () {
     this.fetchWeather(document.querySelector(".search-bar").value);
   },
